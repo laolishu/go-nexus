@@ -1,32 +1,87 @@
-# If you prefer the allow list template instead of the deny list, see community template:
-# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
-#
-# Binaries for programs and plugins
+# go-nexus .gitignore
+
+# 二进制文件
+/bin/
+go-nexus
+go-nexus.exe
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
 
-# Test binary, built with `go test -c`
-*.test
+# Go相关
+vendor/
+*.mod.orig
+*.sum.orig
+go.work
+go.work.sum
 
-# Code coverage profiles and other test artifacts
+# 构建产物
+/release/
+/dist/
+
+# 测试相关
+*.test
 *.out
 coverage.*
 *.coverprofile
 profile.cov
+*.prof
+/test-results/
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# 数据文件
+/data/
+*.db
+*.sqlite
+*.sqlite3
 
-# Go workspace file
-go.work
-go.work.sum
+# 日志文件
+/logs/
+*.log
 
-# env file
+# 配置文件（包含敏感信息）
+config-local.yaml
 .env
+.env.local
 
-# Editor/IDE
-# .idea/
-# .vscode/
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 临时文件
+/tmp/
+/temp/
+
+# Docker相关
+.dockerignore
+
+# 部署相关
+/deployments/secrets/
+*.pem
+*.key
+*.crt
+
+# 插件文件
+/plugins/*.so
+/plugins/*.dll
+
+# 开发工具相关
+.air.toml
+air_tmp/
+
+# 备份文件
+*.bak
+*.backup

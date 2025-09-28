@@ -1,0 +1,47 @@
+# 生产环境配置
+server:
+  host: "0.0.0.0"
+  port: 8081
+  mode: "release"
+  read_timeout: "30s"
+  write_timeout: "30s"
+
+database:
+  type: "postgresql"
+  dsn: "postgres://nexus:${DATABASE_PASSWORD}@postgres:5432/go_nexus?sslmode=require"
+  max_open_conns: 50
+  max_idle_conns: 20
+
+storage:
+  type: "s3"
+  s3:
+    endpoint: "${S3_ENDPOINT}"
+    region: "${S3_REGION}"
+    bucket: "${S3_BUCKET}"
+    access_key_id: "${S3_ACCESS_KEY_ID}"
+    secret_access_key: "${S3_SECRET_ACCESS_KEY}"
+    use_ssl: true
+
+cache:
+  type: "redis"
+  redis:
+    addr: "${REDIS_ADDR}"
+    password: "${REDIS_PASSWORD}"
+    db: 0
+    pool_size: 20
+
+log:
+  level: "info"
+  format: "json"
+  output: "stdout"
+
+security:
+  jwt_secret: "${JWT_SECRET}"
+  jwt_expire: "24h"
+  enable_https: true
+  cert_file: "/etc/ssl/certs/go-nexus.crt"
+  key_file: "/etc/ssl/private/go-nexus.key"
+
+plugins:
+  enabled: ["maven", "npm", "docker"]
+  path: "/var/lib/go-nexus/plugins"

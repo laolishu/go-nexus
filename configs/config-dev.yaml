@@ -1,0 +1,34 @@
+# 开发环境配置
+server:
+  host: "127.0.0.1"
+  port: 8081
+  mode: "debug"
+  read_timeout: "30s"
+  write_timeout: "30s"
+
+database:
+  type: "sqlite"
+  dsn: "data/go-nexus-dev.db"
+  max_open_conns: 10
+  max_idle_conns: 5
+
+storage:
+  type: "filesystem"
+  base_path: "./data/storage"
+
+cache:
+  type: "memory"
+
+log:
+  level: "debug"
+  format: "text"
+  output: "stdout"
+
+security:
+  jwt_secret: "dev-secret-key"
+  jwt_expire: "24h"
+  enable_https: false
+
+plugins:
+  enabled: ["maven", "npm"]
+  path: "./data/plugins"
