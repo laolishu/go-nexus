@@ -44,7 +44,7 @@ cache:
 log:
   level: "info" # debug, info, warn, error
   format: "json" # json, text
-  output: "file" # stdout, file
+  output: "stdout" # stdout, file
   file_path: "resource/log/app.log"
   max_size: 100 # MB
   max_backups: 3

@@ -10,13 +10,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/laolishu/go-nexus/internal/constant"
 	"github.com/spf13/cobra"
-)
-
-var (
-	Version   = "dev"
-	GitCommit = "unknown"
-	BuildTime = "unknown"
 )
 
 var (
@@ -30,7 +25,7 @@ func main() {
 		Short: "轻量云原生仓库管理工具",
 		Long: `go-nexus 是一款基于 Golang 开发的轻量云原生仓库管理工具，
 专为中小团队及云原生环境设计，旨在简化依赖管理流程。`,
-		Version: fmt.Sprintf("%s (commit: %s, built: %s)", Version, GitCommit, BuildTime),
+		Version: fmt.Sprintf("%s (commit: %s, built: %s)", constant.Version, constant.GitCommit, constant.BuildTime),
 	}
 
 	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "resource/configs/config.yaml", "配置文件路径")
@@ -93,8 +88,10 @@ func runServer(cmd *cobra.Command, args []string) error {
 	}()
 
 	app.Logger.Info("Starting server",
+		"version", constant.Version,
+		"buildTime", constant.BuildTime,
+		"gitCommit", constant.GitCommit,
 		"port", app.Config.Server.Port,
-		"version", Version,
 	)
 
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

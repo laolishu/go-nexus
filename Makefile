@@ -6,6 +6,8 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GOMOD=$(GOCMD) mod
 WIRE=wire
+goos=$(shell go env GOOS)
+goarch=$(shell go env GOARCH)
 
 # 项目信息
 PROJECT_NAME=go-nexus
@@ -14,10 +16,10 @@ BINARY_PATH=./bin/$(BINARY_NAME)
 MAIN_PATH=./cmd/server
 
 # 版本信息
-VERSION?=v0.1.0
+VERSION?=v0.5.0
 GIT_COMMIT=$(shell git rev-parse HEAD 2>/dev/null || echo "unknown")
-BUILD_TIME=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-LDFLAGS=-X main.Version=$(VERSION) -X main.GitCommit=$(GIT_COMMIT) -X main.BuildTime=$(BUILD_TIME)
+BUILD_TIME=$(shell powershell -Command "Get-Date -Format yyyy-MM-ddTHH:mm:ssZ")
+LDFLAGS=-X github.com/laolishu/go-nexus/internal/constant.Version=$(VERSION) -X github.com/laolishu/go-nexus/internal/constant.GitCommit=$(GIT_COMMIT) -X github.com/laolishu/go-nexus/internal/constant.BuildTime=$(BUILD_TIME)
 
 # Docker参数
 DOCKER_IMAGE=laolishu/$(PROJECT_NAME)
@@ -57,7 +59,7 @@ help:
 .PHONY: build
 build: wire-gen
 	@echo "Building $(BINARY_NAME)..."
-	@mkdir -p bin
+	@if not exist bin mkdir bin
 	$(GOBUILD) -ldflags "$(LDFLAGS)" -o $(BINARY_PATH) $(MAIN_PATH)
 	@echo "Build complete: $(BINARY_PATH)"
 
