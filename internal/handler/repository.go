@@ -7,7 +7,7 @@ import (
 	"github.com/laolishu/go-nexus/internal/service"
 )
 
-// RepositoryHandler 处理仓库相关的HTTP请求
+// RepositoryHandler 处理仓库相关的 HTTP 请求
 type RepositoryHandler struct {
 	logger            *slog.Logger
 	repositoryService service.RepositoryService

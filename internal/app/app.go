@@ -8,9 +8,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/laolishu/go-nexus/internal/config"
 	"github.com/laolishu/go-nexus/internal/handler"
 	"github.com/laolishu/go-nexus/internal/service"
+	"github.com/laolishu/go-nexus/pkg/config"
 	"github.com/laolishu/go-nexus/pkg/sysinfo"
 )
 
@@ -45,7 +45,7 @@ func NewApp(
 	artifactHandler *handler.ArtifactHandler,
 	repositoryService service.RepositoryService,
 	artifactService service.ArtifactService,
-	
+
 ) *App {
 	// 设置 Gin 模式
 	if cfg.Server.Mode == "release" {
@@ -68,7 +68,6 @@ func NewApp(
 		Router:            router,
 		RepositoryService: repositoryService,
 		ArtifactService:   artifactService,
-		
 	}
 }
 
@@ -94,11 +93,6 @@ func setupRoutes(
 			"memory_usage": info.MemoryUsage,
 		})
 	})
-
-	router.GET("/ready", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ready"})
-	})
-
 
 	// API 路由组
 	v1 := router.Group("/api/v1")

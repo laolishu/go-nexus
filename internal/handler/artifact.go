@@ -7,7 +7,7 @@ import (
 	"github.com/laolishu/go-nexus/internal/service"
 )
 
-// ArtifactHandler 处理制品相关的HTTP请求
+// ArtifactHandler 处理制品相关的 HTTP 请求
 type ArtifactHandler struct {
 	logger          *slog.Logger
 	artifactService service.ArtifactService

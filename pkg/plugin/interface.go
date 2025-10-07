@@ -27,7 +27,7 @@ type FormatPlugin interface {
 	// Format 返回支持的格式名称
 	Format() string
 
-	// ParseMetadata 解析artifact元数据
+	// ParseMetadata 解析 artifact 元数据
 	ParseMetadata(ctx context.Context, data []byte) (*Metadata, error)
 
 	// ValidatePath 验证路径格式
@@ -61,17 +61,17 @@ type StoragePlugin interface {
 type IntegrationPlugin interface {
 	Plugin
 
-	// OnArtifactUploaded artifact上传后回调
+	// OnArtifactUploaded artifact 上传后回调
 	OnArtifactUploaded(ctx context.Context, event *ArtifactEvent) error
 
-	// OnArtifactDeleted artifact删除后回调
+	// OnArtifactDeleted artifact 删除后回调
 	OnArtifactDeleted(ctx context.Context, event *ArtifactEvent) error
 
 	// OnRepositoryCreated 仓库创建后回调
 	OnRepositoryCreated(ctx context.Context, event *RepositoryEvent) error
 }
 
-// Metadata artifact元数据
+// Metadata artifact 元数据
 type Metadata struct {
 	GroupID      string            `json:"group_id"`
 	ArtifactID   string            `json:"artifact_id"`

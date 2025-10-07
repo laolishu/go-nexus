@@ -1,3 +1,11 @@
+/*
+ * @Descripttion:
+ * @version:
+ * @Author: lfzxs@qq.com
+ * @Date: 2025-10-07 21:56:40
+ * @LastEditors: lfzxs@qq.com
+ * @LastEditTime: 2025-10-07 22:29:13
+ */
 package sysinfo
 
 import (

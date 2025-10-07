@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/google/wire"
-	"github.com/laolishu/go-nexus/internal/config"
+	"github.com/laolishu/go-nexus/pkg/config"
 )
 
 // ProviderSet 应用程序层的 Wire 提供者集合

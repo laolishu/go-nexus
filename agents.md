@@ -51,10 +51,6 @@ go-nexus/
 │   │   └── providers.go      # Wire提供者
 │   ├── constant/             # 全局常量（如版本信息）
 │   │   └── version.go        # 版本、构建信息等
-│   ├── config/               # 配置管理
-│   │   ├── config.go         # 配置结构定义
-│   │   ├── loader.go         # 配置加载器
-│   │   └── providers.go      # Wire配置提供者
 │   ├── handler/              # HTTP处理器
 │   │   ├── repository.go     # 仓库相关接口
 │   │   ├── artifact.go       # 制品相关接口
@@ -78,6 +74,10 @@ go-nexus/
 │       ├── s3/               # S3存储实现
 │       └── providers.go      # Wire存储提供者
 ├── pkg/                       # 公共库代码
+│   ├── config/               # 配置管理
+│   │   ├── config.go         # 配置结构定义
+│   │   ├── loader.go         # 配置加载器
+│   │   └── providers.go      # Wire配置提供者
 │   ├── logger/               # 日志工具
 │   ├── cache/                # 缓存工具
 │   ├── plugin/               # 插件框架

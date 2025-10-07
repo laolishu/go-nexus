@@ -15,7 +15,7 @@ import (
 
 	"gopkg.in/natefinch/lumberjack.v2"
 
-	"github.com/laolishu/go-nexus/internal/config"
+	"github.com/laolishu/go-nexus/pkg/config"
 )
 
 // NewLogger 创建新的日志记录器

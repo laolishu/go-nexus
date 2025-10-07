@@ -1,9 +1,17 @@
+/*
+ * @Descripttion:
+ * @version:
+ * @Author: lfzxs@qq.com
+ * @Date: 2025-10-06 23:59:34
+ * @LastEditors: lfzxs@qq.com
+ * @LastEditTime: 2025-10-07 23:37:20
+ */
 package repository
 
 import (
 	"fmt"
 
-	"github.com/laolishu/go-nexus/internal/config"
+	"github.com/laolishu/go-nexus/pkg/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -35,13 +43,13 @@ func NewDB(cfg *config.Config) (*gorm.DB, func(), error) {
 		return nil, nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	// 获取底层SQL连接池
+	// 获取底层SQL连接
 	sqlDB, err := db.DB()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get database connection pool: %w", err)
 	}
 
-	// 设置连接池参数
+	// 设置连接池参�?
 	sqlDB.SetMaxOpenConns(cfg.Database.MaxOpenConns)
 	sqlDB.SetMaxIdleConns(cfg.Database.MaxIdleConns)
 	sqlDB.SetConnMaxLifetime(cfg.Database.ConnMaxLifetime)

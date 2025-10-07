@@ -107,7 +107,7 @@ func LoadConfig(configFile string) (*Config, error) {
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
-	// 设置默认值
+	// 设置默认�?
 	setDefaults()
 
 	// 读取配置文件
@@ -128,9 +128,9 @@ func LoadConfig(configFile string) (*Config, error) {
 	return &config, nil
 }
 
-// setDefaults 设置默认配置值
+// setDefaults 设置默认配置�?
 func setDefaults() {
-	// 服务器默认配置
+	// 服务器默认配�?
 	viper.SetDefault("server.host", "0.0.0.0")
 	viper.SetDefault("server.port", 8081)
 	viper.SetDefault("server.mode", "release")
@@ -138,7 +138,7 @@ func setDefaults() {
 	viper.SetDefault("server.write_timeout", "30s")
 	viper.SetDefault("server.max_header_bytes", 1048576)
 
-	// 数据库默认配置
+	// 数据库默认配�?
 	viper.SetDefault("database.type", "sqlite")
 	viper.SetDefault("database.dsn", "data/go-nexus.db")
 	viper.SetDefault("database.max_open_conns", 25)
@@ -167,17 +167,17 @@ func setDefaults() {
 
 // validateConfig 验证配置
 func validateConfig(config *Config) error {
-	// 验证服务器端口
+	// 验证服务器端�?
 	if config.Server.Port <= 0 || config.Server.Port > 65535 {
 		return fmt.Errorf("invalid server port: %d", config.Server.Port)
 	}
 
-	// 验证服务器模式
+	// 验证服务器模�?
 	if config.Server.Mode != "debug" && config.Server.Mode != "release" && config.Server.Mode != "test" {
 		return fmt.Errorf("invalid server mode: %s", config.Server.Mode)
 	}
 
-	// 验证数据库类型
+	// 验证数据库类�?
 	if config.Database.Type != "sqlite" && config.Database.Type != "postgresql" {
 		return fmt.Errorf("unsupported database type: %s", config.Database.Type)
 	}
