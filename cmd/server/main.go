@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
 var (
@@ -34,7 +33,7 @@ func main() {
 		Version: fmt.Sprintf("%s (commit: %s, built: %s)", Version, GitCommit, BuildTime),
 	}
 
-	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "configs/config.yaml", "配置文件路径")
+	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "resource/configs/config.yaml", "配置文件路径")
 	rootCmd.PersistentFlags().StringVarP(&logLevel, "log-level", "l", "info", "日志级别 (debug, info, warn, error)")
 
 	// 服务器命令
@@ -61,8 +60,11 @@ func main() {
 }
 
 func runServer(cmd *cobra.Command, args []string) error {
+	// 重写配置中的日志级别
+	os.Setenv("GO_NEXUS_LOG_LEVEL", logLevel)
+
 	// 初始化应用
-	app, cleanup, err := InitializeApp(configFile, logLevel)
+	app, cleanup, err := InitializeApp(configFile)
 	if err != nil {
 		return fmt.Errorf("failed to initialize app: %w", err)
 	}
@@ -86,13 +88,13 @@ func runServer(cmd *cobra.Command, args []string) error {
 		defer cancel()
 
 		if err := srv.Shutdown(ctx); err != nil {
-			app.Logger.Error("Server forced to shutdown", zap.Error(err))
+			app.Logger.Error("Server forced to shutdown", "error", err)
 		}
 	}()
 
 	app.Logger.Info("Starting server",
-		zap.Int("port", app.Config.Server.Port),
-		zap.String("version", Version),
+		"port", app.Config.Server.Port,
+		"version", Version,
 	)
 
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -105,13 +107,16 @@ func runServer(cmd *cobra.Command, args []string) error {
 func runMigrate(cmd *cobra.Command, args []string) error {
 	direction, _ := cmd.Flags().GetString("direction")
 
-	app, cleanup, err := InitializeApp(configFile, logLevel)
+	// 重写配置中的日志级别
+	os.Setenv("GO_NEXUS_LOG_LEVEL", logLevel)
+
+	app, cleanup, err := InitializeApp(configFile)
 	if err != nil {
 		return fmt.Errorf("failed to initialize app: %w", err)
 	}
 	defer cleanup()
 
-	app.Logger.Info("Running database migration", zap.String("direction", direction))
+	app.Logger.Info("Running database migration", "direction", direction)
 
 	// TODO: 实现数据库迁移逻辑
 

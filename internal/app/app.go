@@ -1,18 +1,35 @@
 package app
 
 import (
+	"fmt"
+	"log/slog"
+	"strings"
+
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 
 	"github.com/laolishu/go-nexus/internal/config"
 	"github.com/laolishu/go-nexus/internal/handler"
 	"github.com/laolishu/go-nexus/internal/service"
 )
 
+// slogWriter 实现 io.Writer，将 gin 日志重定向到 slog
+type slogWriter struct {
+	logger *slog.Logger
+}
+
+// Write 将 gin 的日志写入 slog
+func (w slogWriter) Write(p []byte) (n int, err error) {
+	msg := strings.TrimSpace(string(p))
+	if msg != "" {
+		w.logger.Info(msg, "source", "gin")
+	}
+	return len(p), nil
+}
+
 // App 应用程序主结构
 type App struct {
 	Config            *config.Config
-	Logger            *zap.Logger
+	Logger            *slog.Logger
 	Router            *gin.Engine
 	RepositoryService service.RepositoryService
 	ArtifactService   service.ArtifactService
@@ -21,7 +38,7 @@ type App struct {
 // NewApp 创建新的应用程序实例
 func NewApp(
 	cfg *config.Config,
-	logger *zap.Logger,
+	logger *slog.Logger,
 	repositoryHandler *handler.RepositoryHandler,
 	artifactHandler *handler.ArtifactHandler,
 	repositoryService service.RepositoryService,
@@ -35,8 +52,8 @@ func NewApp(
 	// 创建路由
 	router := gin.New()
 
-	// 设置中间件
-	router.Use(gin.Logger())
+	// Gin日志重定向到slog
+	router.Use(gin.LoggerWithWriter(slogWriter{logger: logger}))
 	router.Use(gin.Recovery())
 
 	// 设置路由
@@ -85,4 +102,11 @@ func setupRoutes(
 			repositories.DELETE("/:id/artifacts/*path", artifactHandler.DeleteArtifact)
 		}
 	}
+}
+
+// Run 运行应用程序
+func (a *App) Run() error {
+	addr := fmt.Sprintf("%s:%d", a.Config.Server.Host, a.Config.Server.Port)
+	a.Logger.Info("Starting server", "address", addr)
+	return a.Router.Run(addr)
 }

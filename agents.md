@@ -31,7 +31,6 @@ go-nexus是一款基于Golang开发的轻量云原生仓库管理工具，专为
 | **核心内核** | 仓库引擎、缓存管理器、插件调度器 | 仓库管理代理、缓存代理、插件生命周期代理 | Wire DI、LRU缓存、Plugin系统 |
 | **插件层** | 格式插件、存储插件、集成插件 | 格式处理代理、存储代理、集成代理 | Go Plugin、接口抽象 |
 | **存储层** | 本地文件系统、S3/MinIO客户端 | 存储访问代理、对象存储代理 | 文件系统API、S3 SDK |
-| **元数据层** | SQLite/PostgreSQL驱动 | 元数据管理代理、数据库连接代理 | GORM、数据库迁移 |
 
 ## 项目目录结构规范
 
@@ -83,20 +82,18 @@ go-nexus/
 │   │   ├── interface.go      # 插件接口定义
 │   │   └── registry.go       # 插件注册表
 │   └── utils/                # 工具函数
-├── plugins/                   # 插件实现
-│   ├── maven/                # Maven格式插件
-│   ├── npm/                  # NPM格式插件
-│   └── docker/               # Docker格式插件
 ├── api/                       # API定义
 │   ├── openapi/              # OpenAPI规范
 │   └── proto/                # Protocol Buffers定义
-├── web/                       # Web前端资源
-│   ├── static/               # 静态资源
-│   └── templates/            # 模板文件
-├── configs/                   # 配置文件
-│   ├── config.yaml           # 默认配置
-│   ├── config-dev.yaml       # 开发环境配置
-│   └── config-prod.yaml      # 生产环境配置
+├── resource/                  # 运行资源目录
+│   ├── data/                 # 运行数据（如数据库、持久化文件等）
+│   │   └── go-nexus.db       # 默认数据库
+│   ├── configs/              # 配置文件
+│   │   ├── config.yaml       # 默认配置
+│   │   ├── config-dev.yaml   # 开发环境配置
+│   │   └── config-prod.yaml  # 生产环境配置
+│   ├── plugins/              # 插件目录（如maven、npm等插件包）
+│   └── web/                  # 前端静态资源与模板
 ├── scripts/                   # 构建和部署脚本
 │   ├── build.sh              # 构建脚本
 │   ├── deploy.sh             # 部署脚本

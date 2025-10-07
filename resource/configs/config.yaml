@@ -12,7 +12,7 @@ server:
 # 数据库配置
 database:
   type: "sqlite" # sqlite, postgresql
-  dsn: "data/go-nexus.db"
+  dsn: "resource/data/go-nexus.db"
   max_open_conns: 25
   max_idle_conns: 10
   conn_max_lifetime: "5m"
@@ -44,8 +44,8 @@ cache:
 log:
   level: "info" # debug, info, warn, error
   format: "json" # json, text
-  output: "stdout" # stdout, file
-  file_path: "/var/log/go-nexus/app.log"
+  output: "file" # stdout, file
+  file_path: "resource/log/app.log"
   max_size: 100 # MB
   max_backups: 3
   max_age: 28 # days
@@ -61,7 +61,7 @@ security:
 # 插件配置
 plugins:
   enabled: ["maven", "npm"]
-  path: "/var/lib/go-nexus/plugins"
+  path: "resource/plugins"
   configs:
     maven:
       checksum_policy: "strict" # strict, warn, ignore
