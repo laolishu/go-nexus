@@ -9,7 +9,7 @@ go-nexus是一款基于Golang开发的轻量云原生仓库管理工具，专为
 - **云原生设计**: 原生支持Kubernetes、Docker及对象存储（S3/MinIO）
 - **多格式兼容**: 目前支持Maven、npm；Docker、Helm等通过插件扩展
 - **高性能**: 基于Goroutine模型，单实例支持10k+并发请求
-- **插件化架构**: 核心体积<20MB，功能按需扩展
+- **插件化架构**: 核心体积<60MB，功能按需扩展
 
 ### 技术栈
 - **语言**: Go 1.21+
@@ -49,6 +49,8 @@ go-nexus/
 │   ├── app/                   # 应用程序层
 │   │   ├── app.go            # 应用程序主结构
 │   │   └── providers.go      # Wire提供者
+│   ├── constant/             # 全局常量（如版本信息）
+│   │   └── version.go        # 版本、构建信息等
 │   ├── config/               # 配置管理
 │   │   ├── config.go         # 配置结构定义
 │   │   ├── loader.go         # 配置加载器

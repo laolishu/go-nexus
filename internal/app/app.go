@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"log/slog"
+	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -10,6 +11,7 @@ import (
 	"github.com/laolishu/go-nexus/internal/config"
 	"github.com/laolishu/go-nexus/internal/handler"
 	"github.com/laolishu/go-nexus/internal/service"
+	"github.com/laolishu/go-nexus/pkg/sysinfo"
 )
 
 // slogWriter 实现 io.Writer，将 gin 日志重定向到 slog
@@ -43,6 +45,7 @@ func NewApp(
 	artifactHandler *handler.ArtifactHandler,
 	repositoryService service.RepositoryService,
 	artifactService service.ArtifactService,
+	
 ) *App {
 	// 设置 Gin 模式
 	if cfg.Server.Mode == "release" {
@@ -65,6 +68,7 @@ func NewApp(
 		Router:            router,
 		RepositoryService: repositoryService,
 		ArtifactService:   artifactService,
+		
 	}
 }
 
@@ -76,12 +80,25 @@ func setupRoutes(
 ) {
 	// 健康检查
 	router.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok"})
+		info, err := sysinfo.GetInfo()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"status": "error",
+				"error":  err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"status":       "ok",
+			"cpu_usage":    info.CPUUsage,
+			"memory_usage": info.MemoryUsage,
+		})
 	})
 
 	router.GET("/ready", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ready"})
 	})
+
 
 	// API 路由组
 	v1 := router.Group("/api/v1")

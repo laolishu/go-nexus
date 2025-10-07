@@ -11,6 +11,7 @@ var ProviderSet = wire.NewSet(
 	// 绑定接口实现
 	wire.Bind(new(RepositoryService), new(*impl.RepositoryServiceImpl)),
 	wire.Bind(new(ArtifactService), new(*impl.ArtifactServiceImpl)),
+	
 
 	// 注册工厂函数
 	impl.NewRepositoryService,

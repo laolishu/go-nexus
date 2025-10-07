@@ -1,6 +1,15 @@
 //go:build wireinject
 // +build wireinject
 
+/*
+ * @Descripttion:
+ * @version:
+ * @Author: lfzxs@qq.com
+ * @Date: 2025-09-28 23:40:30
+ * @LastEditors: lfzxs@qq.com
+ * @LastEditTime: 2025-10-07 22:02:42
+ */
+
 package main
 
 import (
