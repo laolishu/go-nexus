@@ -15,7 +15,7 @@ package main
 import (
 	"github.com/google/wire"
 
-	"github.com/laolishu/go-nexus/internal/app"
+	"github.com/laolishu/go-nexus/core/app"
 	"github.com/laolishu/go-nexus/internal/handler"
 	"github.com/laolishu/go-nexus/internal/repository"
 	"github.com/laolishu/go-nexus/internal/service"

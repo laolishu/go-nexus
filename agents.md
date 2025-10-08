@@ -9,7 +9,7 @@ go-nexus是一款基于Golang开发的轻量云原生仓库管理工具，专为
 - **云原生设计**: 原生支持Kubernetes、Docker及对象存储（S3/MinIO）
 - **多格式兼容**: 目前支持Maven、npm；Docker、Helm等通过插件扩展
 - **高性能**: 基于Goroutine模型，单实例支持10k+并发请求
-- **插件化架构**: 核心体积<60MB，功能按需扩展
+- **插件化架构**: 核心体积<50MB，功能按需扩展
 
 ### 技术栈
 - **语言**: Go 1.21+
@@ -45,12 +45,17 @@ go-nexus/
 │   │   └── wire_gen.go        # Wire生成的代码
 │   └── cli/                   # 命令行工具
 │       └── main.go
-├── internal/                   # 私有应用代码
-│   ├── app/                   # 应用程序层
+├── core/                       # 核心模块
+│   ├── app/                  # 应用程序层
 │   │   ├── app.go            # 应用程序主结构
 │   │   └── providers.go      # Wire提供者
-│   ├── constant/             # 全局常量（如版本信息）
+│   ├── global/               # 全局常量（如版本信息）
 │   │   └── version.go        # 版本、构建信息等
+│   └── web/                  # Web路由初始化
+│       ├── initweb.go        # 路由初始化代码
+│       ├── router_utils.go   # 路由注册工具函数
+│       └── respons_utils.go  # 标准响应体工具函数
+├── internal/                   # 私有应用代码
 │   ├── handler/              # HTTP处理器
 │   │   ├── repository.go     # 仓库相关接口
 │   │   ├── artifact.go       # 制品相关接口
@@ -163,6 +168,7 @@ go-nexus/
 - 统一请求响应格式
 - HTTP状态码使用规范
 - OpenAPI文档和认证授权
+- 标准响应体结构和使用方法
 
 ### 💻 [代码开发规范](.agents/development-standards.md)
 - Go代码风格和命名规范

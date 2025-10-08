@@ -19,7 +19,7 @@ MAIN_PATH=./cmd/server
 VERSION?=v0.5.0
 GIT_COMMIT=$(shell git rev-parse HEAD 2>/dev/null || echo "unknown")
 BUILD_TIME=$(shell powershell -Command "Get-Date -Format yyyy-MM-ddTHH:mm:ssZ")
-LDFLAGS=-X github.com/laolishu/go-nexus/internal/constant.Version=$(VERSION) -X github.com/laolishu/go-nexus/internal/constant.GitCommit=$(GIT_COMMIT) -X github.com/laolishu/go-nexus/internal/constant.BuildTime=$(BUILD_TIME)
+LDFLAGS=-X github.com/laolishu/go-nexus/core/global.Version=$(VERSION) -X github.com/laolishu/go-nexus/core/global.GitCommit=$(GIT_COMMIT) -X github.com/laolishu/go-nexus/core/global.BuildTime=$(BUILD_TIME)
 
 # Docker参数
 DOCKER_IMAGE=laolishu/$(PROJECT_NAME)
@@ -67,15 +67,17 @@ build: wire-gen
 .PHONY: build-all
 build-all: clean wire-gen
 	@echo "Cross-compiling for multiple platforms..."
-	@mkdir -p bin
-	# Linux
-	GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags "$(LDFLAGS)" -o bin/$(BINARY_NAME)-linux-amd64 $(MAIN_PATH)
-	GOOS=linux GOARCH=arm64 $(GOBUILD) -ldflags "$(LDFLAGS)" -o bin/$(BINARY_NAME)-linux-arm64 $(MAIN_PATH)
-	# Windows
-	GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags "$(LDFLAGS)" -o bin/$(BINARY_NAME)-windows-amd64.exe $(MAIN_PATH)
-	# macOS
-	GOOS=darwin GOARCH=amd64 $(GOBUILD) -ldflags "$(LDFLAGS)" -o bin/$(BINARY_NAME)-darwin-amd64 $(MAIN_PATH)
-	GOOS=darwin GOARCH=arm64 $(GOBUILD) -ldflags "$(LDFLAGS)" -o bin/$(BINARY_NAME)-darwin-arm64 $(MAIN_PATH)
+	@powershell -Command "if (-not (Test-Path bin)) { New-Item -ItemType Directory -Path bin }"
+	@echo "Building for Linux amd64..."
+	@powershell -Command "$$env:CGO_ENABLED='0'; $$env:GOOS='linux'; $$env:GOARCH='amd64'; go build -ldflags \"$(LDFLAGS)\" -o bin/$(BINARY_NAME)-linux-amd64 $(MAIN_PATH)"
+	@echo "Building for Linux arm64..."
+	@powershell -Command "$$env:CGO_ENABLED='0'; $$env:GOOS='linux'; $$env:GOARCH='arm64'; go build -ldflags \"$(LDFLAGS)\" -o bin/$(BINARY_NAME)-linux-arm64 $(MAIN_PATH)"
+	@echo "Building for Windows amd64..."
+	@powershell -Command "$$env:CGO_ENABLED='0'; $$env:GOOS='windows'; $$env:GOARCH='amd64'; go build -ldflags \"$(LDFLAGS)\" -o bin/$(BINARY_NAME)-windows-amd64.exe $(MAIN_PATH)"
+	@echo "Building for macOS amd64..."
+	@powershell -Command "$$env:CGO_ENABLED='0'; $$env:GOOS='darwin'; $$env:GOARCH='amd64'; go build -ldflags \"$(LDFLAGS)\" -o bin/$(BINARY_NAME)-darwin-amd64 $(MAIN_PATH)"
+	@echo "Building for macOS arm64..."
+	@powershell -Command "$$env:CGO_ENABLED='0'; $$env:GOOS='darwin'; $$env:GOARCH='arm64'; go build -ldflags \"$(LDFLAGS)\" -o bin/$(BINARY_NAME)-darwin-arm64 $(MAIN_PATH)"
 	@echo "Cross-compilation complete"
 
 # 清理
@@ -83,8 +85,9 @@ build-all: clean wire-gen
 clean:
 	@echo "Cleaning..."
 	$(GOCLEAN)
-	@rm -rf bin/
-	@rm -f coverage.out coverage.html
+	@powershell -Command "if (Test-Path bin) { Remove-Item -Recurse -Force bin }"
+	@powershell -Command "if (Test-Path coverage.out) { Remove-Item -Force coverage.out }"
+	@powershell -Command "if (Test-Path coverage.html) { Remove-Item -Force coverage.html }"
 	@echo "Clean complete"
 
 # Wire代码生成
@@ -184,9 +187,9 @@ docker-push: docker-build
 .PHONY: release
 release: clean build-all
 	@echo "Creating release $(VERSION)..."
-	@mkdir -p release
-	@cp bin/* release/
-	@cd release && find . -type f -exec sha256sum {} \; > checksums.txt
+	@powershell -Command "if (-not (Test-Path release)) { New-Item -ItemType Directory -Path release }"
+	@powershell -Command "Copy-Item -Path bin\\* -Destination release\\ -Recurse"
+	@powershell -Command "cd release; Get-ChildItem -File | ForEach-Object { (Get-FileHash $$_.FullName).Hash.ToLower() + '  ' + $$_.Name } | Out-File -FilePath checksums.txt -Encoding utf8"
 	@echo "Release $(VERSION) ready in release/ directory"
 
 # 开发运行

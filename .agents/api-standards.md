@@ -49,52 +49,77 @@ POST   /api/v1/auth/refresh           # 刷新Token
 ```http
 Content-Type: application/json
 Authorization: Bearer {jwt_token}
-X-Trace-ID: {trace_id}
+X-Request-ID: {request_id}
 User-Agent: go-nexus-client/1.0.0
 ```
 
-### 统一响应格式
-```json
-{
-  "success": true,
-  "code": 200,
-  "message": "success",
-  "data": {
-    // 具体数据
-  },
-  "meta": {
-    "trace_id": "abc123def456",
-    "timestamp": "2025-09-28T10:30:00Z",
-    "version": "v0.1.0"
-  }
+## 标准响应体规范
+
+### 标准响应格式
+
+项目使用统一的标准响应体格式，确保所有API接口返回数据的一致性和可追踪性：
+
+```go
+type StandardResponse struct {
+    Code      int         `json:"code"`      // 响应代码：0表示成功，非0表示错误
+    Msg       string      `json:"msg"`       // 响应信息：成功或错误描述
+    Data      interface{} `json:"data"`      // 响应数据：具体的业务数据
+    RequestID string      `json:"requestId"` // 请求ID：用于追踪和调试
 }
 ```
 
-### 错误响应格式
+### 响应工具函数
+
+**成功响应**：
+- `Success(c, data)` - 标准成功响应
+- `SuccessWithMsg(c, msg, data)` - 带自定义消息的成功响应
+
+**错误响应**：
+- `Error(c, httpStatus, code, msg)` - 通用错误响应
+- `BadRequest(c, msg)` - 400 错误
+- `Unauthorized(c, msg)` - 401 错误
+- `Forbidden(c, msg)` - 403 错误
+- `NotFound(c, msg)` - 404 错误
+- `InternalServerError(c, msg)` - 500 错误
+
+### 请求ID处理
+
+系统自动处理请求ID，支持以下方式：
+1. 从 `X-Request-ID` Header 获取客户端传入的请求ID
+2. 从 Gin Context 中获取中间件设置的请求ID
+3. 自动生成 UUID 作为请求ID（兜底机制）
+
+### 响应示例
+
+**成功响应示例**：
 ```json
 {
-  "success": false,
-  "code": 4001,
-  "message": "Repository not found",
-  "error": {
-    "type": "REPOSITORY_NOT_FOUND",
-    "details": "Repository with ID 'maven-public' does not exist",
-    "field": "repository_id"
+  "code": 0,
+  "msg": "success", 
+  "data": {
+    "status": "ok",
+    "cpu_usage": 12.5,
+    "memory_usage": 45.2
   },
-  "meta": {
-    "trace_id": "abc123def456",
-    "timestamp": "2025-09-28T10:30:00Z",
-    "version": "v0.1.0"
-  }
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**错误响应示例**：
+```json
+{
+  "code": 500,
+  "msg": "Failed to get system info: connection failed",
+  "data": null,
+  "requestId": "550e8400-e29b-41d4-a716-446655440001"
 }
 ```
 
 ### 分页响应格式
 ```json
 {
-  "success": true,
-  "code": 200,
-  "message": "success",
+  "code": 0,
+  "msg": "success",
   "data": {
     "items": [...],
     "pagination": {
@@ -103,7 +128,8 @@ User-Agent: go-nexus-client/1.0.0
       "total": 100,
       "total_pages": 5
     }
-  }
+  },
+  "requestId": "550e8400-e29b-41d4-a716-446655440002"
 }
 ```
 

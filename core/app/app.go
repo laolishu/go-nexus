@@ -3,15 +3,14 @@ package app
 import (
 	"fmt"
 	"log/slog"
-	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/laolishu/go-nexus/core/web"
 	"github.com/laolishu/go-nexus/internal/handler"
 	"github.com/laolishu/go-nexus/internal/service"
 	"github.com/laolishu/go-nexus/pkg/config"
-	"github.com/laolishu/go-nexus/pkg/sysinfo"
 )
 
 // slogWriter 实现 io.Writer，将 gin 日志重定向到 slog
@@ -60,7 +59,7 @@ func NewApp(
 	router.Use(gin.Recovery())
 
 	// 设置路由
-	setupRoutes(router, repositoryHandler, artifactHandler)
+	web.SetupRoutes(router, repositoryHandler, artifactHandler)
 
 	return &App{
 		Config:            cfg,
@@ -68,50 +67,6 @@ func NewApp(
 		Router:            router,
 		RepositoryService: repositoryService,
 		ArtifactService:   artifactService,
-	}
-}
-
-// setupRoutes 设置路由
-func setupRoutes(
-	router *gin.Engine,
-	repositoryHandler *handler.RepositoryHandler,
-	artifactHandler *handler.ArtifactHandler,
-) {
-	// 健康检查
-	router.GET("/health", func(c *gin.Context) {
-		info, err := sysinfo.GetInfo()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"status": "error",
-				"error":  err.Error(),
-			})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"status":       "ok",
-			"cpu_usage":    info.CPUUsage,
-			"memory_usage": info.MemoryUsage,
-		})
-	})
-
-	// API 路由组
-	v1 := router.Group("/api/v1")
-	{
-		// 仓库管理
-		repositories := v1.Group("/repositories")
-		{
-			repositories.GET("", repositoryHandler.ListRepositories)
-			repositories.POST("", repositoryHandler.CreateRepository)
-			repositories.GET("/:id", repositoryHandler.GetRepository)
-			repositories.PUT("/:id", repositoryHandler.UpdateRepository)
-			repositories.DELETE("/:id", repositoryHandler.DeleteRepository)
-
-			// Artifact 管理
-			repositories.GET("/:id/artifacts", artifactHandler.ListArtifacts)
-			repositories.POST("/:id/artifacts", artifactHandler.UploadArtifact)
-			repositories.GET("/:id/artifacts/*path", artifactHandler.DownloadArtifact)
-			repositories.DELETE("/:id/artifacts/*path", artifactHandler.DeleteArtifact)
-		}
 	}
 }
 
